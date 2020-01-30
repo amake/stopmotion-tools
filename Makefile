@@ -12,7 +12,7 @@ all: silent-pingpong.mp4 with-audio-pingpong.mp4
 silent.mp4: $(jpg)
 # ffmpeg video filter -vf
 # - resizes to iPhone XS max video resolution
-	ffmpeg $(ffmpeg_flags) -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'scale=1920:-1' $@
+	ffmpeg $(ffmpeg_flags) -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'scale=1920:-1' -pix_fmt yuv420p $@
 
 with-audio.mp4: silent.mp4 audio.m4a
 	ffmpeg $(ffmpeg_flags) -i $< -i $(word 2,$^) -c copy -map 0:v:0 -map 1:a:0 -shortest $@
