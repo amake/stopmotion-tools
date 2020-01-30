@@ -30,3 +30,8 @@ with-audio.mp4: silent.mp4 audio.m4a
 .PHONY: clean
 clean:
 	rm *.mp4
+
+.PHONY: preview
+preview: ffmpeg_flags=-y
+preview: silent.mp4
+	ffplay -loop 2 -noborder -alwaysontop -autoexit $(<)
