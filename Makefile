@@ -35,3 +35,10 @@ clean:
 preview: ffmpeg_flags=-y
 preview: silent.mp4
 	ffplay -loop 2 -noborder -alwaysontop -autoexit $(<)
+
+watchdir=
+
+.PHONY: watch
+watch:
+	$(if $(watchdir),,$(error Specify watchdir=))
+	./monitor $(watchdir) $(PWD)
