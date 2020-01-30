@@ -1,9 +1,9 @@
 SHELL := /bin/bash
 
-# Requires ffmpeg, libheif
+# Requires ffmpeg
 
-heic := $(wildcard *.HEIC)
-jpg := $(heic:.HEIC=.jpg)
+jpg_glob := *.JPG
+jpg := $(wildcard $(jpg_glob))
 
 .PHONY:
 all: silent-pingpong.mp4 with-audio-pingpong.mp4
@@ -12,7 +12,7 @@ silent.mp4: $(jpg)
 # ffmpeg video filter -vf
 # - assumes vertical photos
 # - resizes to iPhone XS max video resolution
-	ffmpeg -framerate 10 -pattern_type glob -i '*.jpg' -vf 'transpose=1,scale=1920:-1' $@
+	ffmpeg -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'transpose=1,scale=1920:-1' $@
 
 with-audio.mp4: silent.mp4 audio.m4a
 	ffmpeg -i $< -i $(word 2,$^) -c copy -map 0:v:0 -map 1:a:0 -shortest $@
@@ -29,4 +29,4 @@ with-audio.mp4: silent.mp4 audio.m4a
 
 .PHONY: clean
 clean:
-	rm *.jpg *.mp4
+	rm *.mp4
