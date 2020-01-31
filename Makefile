@@ -40,10 +40,6 @@ with-audio.mp4: silent.mp4 audio.m4a
 clean:
 	rm *.mp4
 
-.PHONY: preview
-preview: preview.mp4
-	ffplay -loop 2 -noborder -alwaysontop -autoexit $(<)
-
 watchdir=
 
 .PHONY: watch

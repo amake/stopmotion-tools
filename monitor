@@ -4,14 +4,26 @@ set -euo pipefail
 watchdir="$1"
 target="$2"
 
+preview=preview.mp4
+
+modtime() {
+    if [ -f "$1" ]; then
+        stat -f%m "$1"
+    else
+        echo 0
+    fi
+}
+
 while true; do
-    before=$(ls -1 | wc -l)
+    before=$(modtime "$preview")
     # Don't use -a because we want copied files to have an updated modified date.
     # Exclude FlashAir default image needed for manual Wi-Fi toggling
     rsync -vr --size-only --exclude 'FA000001.JPG' "$watchdir" "$target"
-    after=$(ls -1 | wc -l)
-    if ((after > before)); then
-        make preview
+    make "$preview"
+    after=$(modtime "$preview")
+    if [ "$before" -ne "$after" ]; then
+        kill %1 || true
+        ffplay -loglevel quiet -fs -loop 0 -noborder -alwaysontop "$preview" &
     fi
     sleep 2
 done
