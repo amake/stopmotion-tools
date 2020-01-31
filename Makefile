@@ -10,7 +10,8 @@ video_width := 1920
 .PHONY:
 all: silent-pingpong.mp4 $(if $(wildcard *.m4a),with-audio-pingpong.mp4)
 
-silent.mp4: $(jpg)
+preview.mp4: video_width := 720
+preview.mp4 silent.mp4: $(jpg)
 # ffmpeg video filter -vf
 # - resizes to iPhone XS max video resolution
 	ffmpeg -y $(ffmpeg_flags) -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'scale=$(video_width):-1' -pix_fmt yuv420p $@
@@ -33,7 +34,7 @@ clean:
 	rm *.mp4
 
 .PHONY: preview
-preview: silent.mp4
+preview: preview.mp4
 	ffplay -loop 2 -noborder -alwaysontop -autoexit $(<)
 
 watchdir=
