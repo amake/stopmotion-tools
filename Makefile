@@ -5,6 +5,7 @@ SHELL := /bin/bash
 jpg_glob := *.JPG
 jpg := $(wildcard $(jpg_glob))
 ffmpeg_flags :=
+video_width := 1920
 
 .PHONY:
 all: silent-pingpong.mp4 $(if $(wildcard *.m4a),with-audio-pingpong.mp4)
@@ -12,7 +13,7 @@ all: silent-pingpong.mp4 $(if $(wildcard *.m4a),with-audio-pingpong.mp4)
 silent.mp4: $(jpg)
 # ffmpeg video filter -vf
 # - resizes to iPhone XS max video resolution
-	ffmpeg -y $(ffmpeg_flags) -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'scale=1920:-1' -pix_fmt yuv420p $@
+	ffmpeg -y $(ffmpeg_flags) -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'scale=$(video_width):-1' -pix_fmt yuv420p $@
 
 with-audio.mp4: silent.mp4 audio.m4a
 	ffmpeg -y $(ffmpeg_flags) -i $< -i $(word 2,$^) -c copy -map 0:v:0 -map 1:a:0 -shortest $@
