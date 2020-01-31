@@ -7,7 +7,7 @@ jpg := $(wildcard $(jpg_glob))
 ffmpeg_flags :=
 
 .PHONY:
-all: silent-pingpong.mp4 with-audio-pingpong.mp4
+all: silent-pingpong.mp4 $(if $(wildcard *.m4a),with-audio-pingpong.mp4)
 
 silent.mp4: $(jpg)
 # ffmpeg video filter -vf
