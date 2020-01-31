@@ -12,19 +12,19 @@ all: silent-pingpong.mp4 $(if $(wildcard *.m4a),with-audio-pingpong.mp4)
 silent.mp4: $(jpg)
 # ffmpeg video filter -vf
 # - resizes to iPhone XS max video resolution
-	ffmpeg $(ffmpeg_flags) -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'scale=1920:-1' -pix_fmt yuv420p $@
+	ffmpeg -y $(ffmpeg_flags) -framerate 10 -pattern_type glob -i '$(jpg_glob)' -vf 'scale=1920:-1' -pix_fmt yuv420p $@
 
 with-audio.mp4: silent.mp4 audio.m4a
-	ffmpeg $(ffmpeg_flags) -i $< -i $(word 2,$^) -c copy -map 0:v:0 -map 1:a:0 -shortest $@
+	ffmpeg -y $(ffmpeg_flags) -i $< -i $(word 2,$^) -c copy -map 0:v:0 -map 1:a:0 -shortest $@
 
 %-pingpong.mp4: %.mp4 %-reversed.mp4
-	ffmpeg $(ffmpeg_flags) -f concat -safe 0 -i <(printf "file '%s'\n" $(addprefix $(PWD)/,$^)) -c copy $@
+	ffmpeg -y $(ffmpeg_flags) -f concat -safe 0 -i <(printf "file '%s'\n" $(addprefix $(PWD)/,$^)) -c copy $@
 
 %.jpg: %.HEIC
 	heif-convert $< $@
 
 %-reversed.mp4: %.mp4
-	ffmpeg $(ffmpeg_flags) -i $< -vf reverse -af areverse $@
+	ffmpeg -y $(ffmpeg_flags) -i $< -vf reverse -af areverse $@
 
 
 .PHONY: clean
@@ -32,7 +32,6 @@ clean:
 	rm *.mp4
 
 .PHONY: preview
-preview: ffmpeg_flags=-y
 preview: silent.mp4
 	ffplay -loop 2 -noborder -alwaysontop -autoexit $(<)
 
