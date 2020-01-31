@@ -15,7 +15,13 @@ preview.mp4: ffmpeg_flags += -preset ultrafast
 preview.mp4 silent.mp4: $(jpg)
 # ffmpeg video filter -vf
 # - resizes to iPhone XS max video resolution
-	ffmpeg -y -framerate 10 -pattern_type glob -i '$(jpg_glob)' $(ffmpeg_flags) -vf 'scale=$(video_width):-1' -pix_fmt yuv420p $@
+	$(if $(<),ffmpeg -y \
+		-framerate 10 \
+		-pattern_type glob -i '$(jpg_glob)' \
+		$(ffmpeg_flags) \
+		-vf 'scale=$(video_width):-1' \
+		-pix_fmt yuv420p \
+		$@,$(warning No source images found; skipping creating $@))
 
 with-audio.mp4: silent.mp4 audio.m4a
 	ffmpeg -y -i $< -i $(word 2,$^) $(ffmpeg_flags) -c copy -map 0:v:0 -map 1:a:0 -shortest $@
